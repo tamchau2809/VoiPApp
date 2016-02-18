@@ -3,9 +3,15 @@
     tools:context="chau.voipapp.ContactActivity" >
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:id="@+id/action_contact_search"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/search"
+        android:title="Tìm Kiếm" 
+        android:titleCondensed="Tìm Kiếm"/>
+    
+    <item 
+        android:id="@+id/action_contact_show_keyboard"
+        android:title="Hiện Bàn Phím"
+        android:showAsAction="ifRoom"/>
 
 </menu>

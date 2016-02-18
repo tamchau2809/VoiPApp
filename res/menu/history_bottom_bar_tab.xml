@@ -2,15 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
         android:id="@+id/bottomHistorySearch"
-        android:title="Search"
         android:icon="@drawable/search"
         android:showAsAction="ifRoom|withText"
-        />
     
     <item
         android:id="@+id/bottomHistoryClear"
         android:title="Xóa Tất Cả"
-        android:icon="@drawable/clear"
         android:showAsAction="ifRoom"
 		/>
 </menu>
