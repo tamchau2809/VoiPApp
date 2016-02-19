@@ -15,5 +15,6 @@
     <string name="title_activity_history">Lịch Sử</string>
     <string name="title_activity_about">Thông Tin</string>
     <string name="title_activity_contact">Liên Lạc</string>
+    <string name="title_activity_keyboard">KeyboardActivity</string>
 
 </resources>
