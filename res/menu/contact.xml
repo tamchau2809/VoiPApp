@@ -11,7 +11,7 @@
     
     <item 
         android:id="@+id/action_contact_show_keyboard"
-        android:title="Hiện Bàn Phím"
+        android:title="Bàn Phím"
         android:showAsAction="ifRoom"/>
 
 </menu>
