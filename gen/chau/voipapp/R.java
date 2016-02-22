@@ -1997,9 +1997,9 @@ containing a value of this type.
     public static final class id {
         public static final int Key_board_container=0x7f0a0051;
         public static final int action0=0x7f0a0072;
-        public static final int action_About=0x7f0a0081;
-        public static final int action_LogOut=0x7f0a0080;
-        public static final int action_Login=0x7f0a007f;
+        public static final int action_About=0x7f0a0087;
+        public static final int action_LogOut=0x7f0a0086;
+        public static final int action_Login=0x7f0a0085;
         public static final int action_bar=0x7f0a003e;
         public static final int action_bar_activity_content=0x7f0a0003;
         public static final int action_bar_container=0x7f0a003d;
@@ -2007,8 +2007,8 @@ containing a value of this type.
         public static final int action_bar_spinner=0x7f0a0002;
         public static final int action_bar_subtitle=0x7f0a0022;
         public static final int action_bar_title=0x7f0a0021;
-        public static final int action_contact_search=0x7f0a0082;
-        public static final int action_contact_show_keyboard=0x7f0a0083;
+        public static final int action_contact_search=0x7f0a007f;
+        public static final int action_contact_show_keyboard=0x7f0a0080;
         public static final int action_context_bar=0x7f0a003f;
         public static final int action_divider=0x7f0a0076;
         public static final int action_menu_divider=0x7f0a0005;
@@ -2020,8 +2020,8 @@ containing a value of this type.
         public static final int alertTitle=0x7f0a002e;
         public static final int always=0x7f0a0019;
         public static final int beginning=0x7f0a001e;
-        public static final int bottomHistoryClear=0x7f0a0087;
-        public static final int bottomHistorySearch=0x7f0a0086;
+        public static final int bottomHistoryClear=0x7f0a0082;
+        public static final int bottomHistorySearch=0x7f0a0081;
         public static final int btnBackSpace=0x7f0a0064;
         public static final int btnCall=0x7f0a0071;
         public static final int btnCancel=0x7f0a005f;
@@ -2067,8 +2067,8 @@ containing a value of this type.
         public static final int ifRoom=0x7f0a001b;
         public static final int image=0x7f0a0026;
         public static final int info=0x7f0a007d;
-        public static final int itemDelete=0x7f0a0085;
-        public static final int itemHistorycall=0x7f0a0084;
+        public static final int itemDelete=0x7f0a0084;
+        public static final int itemHistorycall=0x7f0a0083;
         public static final int line1=0x7f0a0077;
         public static final int line3=0x7f0a007b;
         public static final int listMode=0x7f0a000a;
@@ -2220,11 +2220,10 @@ containing a value of this type.
         public static final int support_simple_spinner_dropdown_item=0x7f030030;
     }
     public static final class menu {
-        public static final int bottom_bar_menu_login=0x7f0d0000;
-        public static final int contact=0x7f0d0001;
-        public static final int history=0x7f0d0002;
-        public static final int history_bottom_bar_tab=0x7f0d0003;
-        public static final int phone_call=0x7f0d0004;
+        public static final int contact_bottom_bar=0x7f0d0000;
+        public static final int history_bottom_bar=0x7f0d0001;
+        public static final int history_click_menu=0x7f0d0002;
+        public static final int login_bottom_bar=0x7f0d0003;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

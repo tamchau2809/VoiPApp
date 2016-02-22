@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,11 +35,9 @@ public class ContactActivity extends Fragment
 		rootView = inflater.inflate(R.layout.activity_contact, container, false);
 		
 		initWiget();
-		keyboard = new Keyboard();
 		
 		ArrayList<ContactItem> list = getContact();
 		
-		lvContact = (ListView)rootView.findViewById(R.id.lvContact);
 		lvContact.setAdapter(new ListviewContactAdapter(getActivity(), list));
 		
 		return rootView;
@@ -50,7 +46,7 @@ public class ContactActivity extends Fragment
 	@Override
     public void onCreateOptionsMenu(Menu menu,MenuInflater inflater){
         
-		inflater.inflate(R.menu.contact, menu);
+		inflater.inflate(R.menu.contact_bottom_bar, menu);
 		
         super.onCreateOptionsMenu(menu,inflater);
         
@@ -108,7 +104,8 @@ public class ContactActivity extends Fragment
 	 */
 	public void initWiget()
 	{
-		
+		keyboard = new Keyboard();
+		lvContact = (ListView)rootView.findViewById(R.id.lvContact);
 	}
 	
 	private ArrayList<ContactItem> getContact()
@@ -117,8 +114,8 @@ public class ContactActivity extends Fragment
 		ContentResolver cr = getActivity().getContentResolver();
 		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
 				null, null, null, null);
-//		if(cur.getCount() > 0)
-//		{
+		if(cur.getCount() > 0)
+		{
 			while(cur.moveToNext())
 			{
 				String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
@@ -132,12 +129,13 @@ public class ContactActivity extends Fragment
                     		 new String[]{id}, null);
                      while (pCur.moveToNext()) {
                     	 phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    	 phoneNo = phoneNo.replace(" ", "");
                     	 list.add(new ContactItem(name, phoneNo));
                      } 
       	        pCur.close();
         		}
 			}
-//		}
+		}
 		return list;
 	}
 	

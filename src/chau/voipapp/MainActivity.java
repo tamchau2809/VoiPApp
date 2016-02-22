@@ -230,7 +230,7 @@ public class MainActivity extends FragmentActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		getMenuInflater().inflate(R.menu.bottom_bar_menu_login, menu);
+		getMenuInflater().inflate(R.menu.login_bottom_bar, menu);
 		return true;
 	}
 	

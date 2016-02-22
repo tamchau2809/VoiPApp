@@ -17,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -52,7 +51,6 @@ public class HistoryActivity extends Fragment
 		registerForContextMenu(lvHis);
 		
 		ArrayList<HistoryInfo> a = getHistoryfromDevice();
-//		getHistoryfromDevice();
 		
 		lvHis.setAdapter(new ListviewContactAdapter(getActivity(), a));
 		lvHis.setOnItemClickListener(listenerlvHis);
@@ -72,7 +70,7 @@ public class HistoryActivity extends Fragment
 	@Override
     public void onCreateOptionsMenu(Menu menu,MenuInflater inflater){
         
-		inflater.inflate(R.menu.history_bottom_bar_tab, menu);
+		inflater.inflate(R.menu.history_bottom_bar, menu);
 		
         super.onCreateOptionsMenu(menu,inflater);
         
@@ -84,7 +82,7 @@ public class HistoryActivity extends Fragment
 	{
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getActivity().getMenuInflater();
-		inflater.inflate(R.menu.history, menu);
+		inflater.inflate(R.menu.history_click_menu, menu);
 	}
 	
 	@Override
