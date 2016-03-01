@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/chau/voipapp/ContactActivity.java=UTF-8
 encoding//src/chau/voipapp/HistoryActivity.java=UTF-8
+encoding//src/chau/voipapp/Keyboard.java=UTF-8
+encoding//src/chau/voipapp/LoginActivity.java=UTF-8
 encoding//src/chau/voipapp/MainActivity.java=UTF-8
+encoding//src/chau/voipapp/SipService.java=UTF-8

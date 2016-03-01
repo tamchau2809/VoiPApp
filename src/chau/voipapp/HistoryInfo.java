@@ -3,6 +3,7 @@ package chau.voipapp;
 import java.io.Serializable;
 
 public class HistoryInfo implements Serializable, Comparable<HistoryInfo>
+//, Comparable<HistoryInfo>
 {
 	/**
 	 * 
@@ -13,6 +14,18 @@ public class HistoryInfo implements Serializable, Comparable<HistoryInfo>
 	private String callDuration;
 	private boolean outgoingCall;
 	private boolean missedCall;
+	private String name;
+	
+	public HistoryInfo(String sipAddr, String name, String callDate, String callDuration,
+			boolean outgoingCall, boolean missedCall) {
+		super();
+		this.sipAddr = sipAddr;
+		this.name = name;
+		this.callDate = callDate;
+		this.callDuration = callDuration;
+		this.outgoingCall = outgoingCall;
+		this.missedCall = missedCall;
+	}
 	
 	public boolean isMissedCall() {
 		return missedCall;
@@ -22,28 +35,20 @@ public class HistoryInfo implements Serializable, Comparable<HistoryInfo>
 		this.missedCall = missedCall;
 	}
 	
-	public HistoryInfo(String sipAddr, boolean miss)
-	{
-		super();
-		this.sipAddr = sipAddr;
-	}
-	
-	public HistoryInfo(String sipAddr, String callDate, String callDuration,
-			boolean outgoingCall, boolean missedCall) {
-		super();
-		this.sipAddr = sipAddr;
-		this.callDate = callDate;
-		this.callDuration = callDuration;
-		this.outgoingCall = outgoingCall;
-		this.missedCall = missedCall;
-	}
-	
 	public String getSipAddr() {
 		return sipAddr;
 	}
 	
 	public void setSipAddr(String sipAddr) {
 		this.sipAddr = sipAddr;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public String getCallDate() {
@@ -60,10 +65,10 @@ public class HistoryInfo implements Serializable, Comparable<HistoryInfo>
 	public void setCallDuration(String callDuration) {
 		this.callDuration = callDuration;
 	}
-	public String toString()
-	{
-		return sipAddr;
-	}
+//	public String toString()
+//	{
+//		return sipAddr;
+//	}
 	public boolean isOutgoingCall() {
 		return outgoingCall;
 	}
@@ -74,7 +79,7 @@ public class HistoryInfo implements Serializable, Comparable<HistoryInfo>
 	@Override
 	public int compareTo(HistoryInfo another) {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.getName().compareTo(another.getName());
 	}
 
 }

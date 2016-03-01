@@ -1,7 +1,10 @@
 package chau.voipapp;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
@@ -10,8 +13,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +26,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,9 +37,15 @@ import android.widget.TextView;
 public class HistoryActivity extends Fragment
 {
 	HistoryInfo contact;
-	ArrayList<HistoryInfo> a;
+	public static ArrayList<HistoryInfo> results;
+	public static ListviewHistoryAdapter adapter;
 	String name;
 	int lvClickPos;
+	
+	FileInputStream fis;
+	ObjectInputStream ois;
+	
+	EditText edSearchHistory;
 	
 	View rootView;
 	
@@ -47,24 +62,89 @@ public class HistoryActivity extends Fragment
 		
 		initWiget();
 		initListener();
+		InputMethodManager ipm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		ipm.hideSoftInputFromWindow(edSearchHistory.getWindowToken(), 0);
 		
 		registerForContextMenu(lvHis);
+		results = new ArrayList<HistoryInfo>();
+//		results = GetlistContact();
+//		results = getHistoryfromDevice();
+		adapter = new ListviewHistoryAdapter(getActivity(), results);
+		edSearchHistory.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+//				if(edSearchHistory.getText() == null || edSearchHistory.getText().length() == 0)
+//				{
+//					adapter.notifyDataSetChanged();
+//				}
+//				else
+					adapter.getFilter().filter(s.toString());
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
-		ArrayList<HistoryInfo> a = getHistoryfromDevice();
 		
-		lvHis.setAdapter(new ListviewContactAdapter(getActivity(), a));
+		lvHis.setAdapter(adapter);
 		lvHis.setOnItemClickListener(listenerlvHis);
+		
+		getHistoryContact();
 		
 		return rootView;
 	}	
+	
+	@Override
+	public void onResume() 
+	{
+		edSearchHistory.setText(null);
+		super.onResume();
+	}
 
 	private ArrayList<HistoryInfo> GetlistContact(){
 	    ArrayList<HistoryInfo> contactlist = new ArrayList<HistoryInfo>();
 
-	    contact = new HistoryInfo("aa", true);
+	    contact = new HistoryInfo("0123", "Chau", "21:22", "30",true,false);
+	    contactlist.add(contact);
+	    contact = new HistoryInfo("4567", "Sven", "21:22", "30",true,false);
+	    contactlist.add(contact);
+	    contact = new HistoryInfo("8901", "Com", "21:22", "30",true,false);
 	    contactlist.add(contact);
 
 	    return contactlist; 	
+	}
+	
+	public void getHistoryContact()
+	{
+		try
+		{
+			fis = getContext().openFileInput(SipInit.FILENAME);
+			ois = new ObjectInputStream(fis);
+			HistoryInfo info;
+			while((info = (HistoryInfo)ois.readObject()) != null)
+			{
+				results.add(info);
+			}
+		} catch(Exception e)
+		{
+			try
+			{
+				ois.close();
+			} catch(Exception ex)
+			{}
+		}
+		Collections.reverse(results);
 	}
 	
 	@Override
@@ -101,24 +181,37 @@ public class HistoryActivity extends Fragment
 	//----------------------------------------
 	
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) 
+	{
+		int id = item.getItemId();
+		if(id == R.id.bottomHistorySearch)
+		{
+			if(edSearchHistory.isShown())
+				edSearchHistory.setVisibility(View.GONE);
+			else edSearchHistory.setVisibility(View.VISIBLE);
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
 	public void onPrepareOptionsMenu(Menu menu) 
 	{
 		
 		super.onPrepareOptionsMenu(menu);
-		getActivity().invalidateOptionsMenu();
+//		getActivity().invalidateOptionsMenu();
 //		MenuItem filter = menu.findItem(R.id.bottomSearch).setVisible(false);
 //		filter = menu.findItem(R.id.bottomStatus).setVisible(false);
 //		filter.setVisible(false);
 		
 	}
 	
-	@SuppressWarnings("deprecation")
 	private ArrayList<HistoryInfo> getHistoryfromDevice()
 	{
 		ArrayList<HistoryInfo> contactlist = new ArrayList<HistoryInfo>();
-		Cursor mCursor = getActivity().managedQuery(CallLog.Calls.CONTENT_URI, 
+		Cursor mCursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, 
 				null, null, null, null);
 		
+		int name = mCursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
 		int num = mCursor.getColumnIndex(CallLog.Calls.NUMBER);
 		int type = mCursor.getColumnIndex(CallLog.Calls.TYPE);
 		int date = mCursor.getColumnIndex(CallLog.Calls.DATE);
@@ -128,36 +221,37 @@ public class HistoryActivity extends Fragment
 		
 		mCursor.moveToLast();
 		SimpleDateFormat sdf = new SimpleDateFormat("H:mmaa   EEEE, dd MM, yyyy");
-		while(mCursor.moveToPrevious())
+		if(mCursor.getCount() > 0)
 		{
-			String phoneNum = mCursor.getString(num).replace(" ", "");
-			String callType = mCursor.getString(type);
-			String callDate = mCursor.getString(date);
-			Date callDateTime = new Date(Long.valueOf(callDate));
-			String dura = mCursor.getString(duration);
-//			String dir = null;
-			int dirCode = Integer.parseInt(callType);
-			switch(dirCode)
+			while(mCursor.moveToPrevious())
 			{
-			case CallLog.Calls.OUTGOING_TYPE:
-				outgoingCall = true;
-				break;
-			case CallLog.Calls.INCOMING_TYPE:
-//				dir = "Incoming";
-				break;
-			case CallLog.Calls.MISSED_TYPE:
-				missedCall = true;
-				break;
+				String phoneName = mCursor.getString(name);
+				String phoneNum = mCursor.getString(num).replace(" ", "");
+				String callType = mCursor.getString(type);
+				String callDate = mCursor.getString(date);
+				Date callDateTime = new Date(Long.valueOf(callDate));
+				String dura = mCursor.getString(duration);
+	//			String dir = null;
+				int dirCode = Integer.parseInt(callType);
+				switch(dirCode)
+				{
+				case CallLog.Calls.OUTGOING_TYPE:
+					outgoingCall = true;
+					break;
+				case CallLog.Calls.INCOMING_TYPE:
+					break;
+				case CallLog.Calls.MISSED_TYPE:
+					missedCall = true;
+					break;
+				}
+				contactlist.add(new HistoryInfo(phoneNum, 
+						phoneName, sdf.format(callDateTime), 
+						convertTime(dura), outgoingCall, missedCall));
+				outgoingCall = false;
+				missedCall = false;
 			}
-//			sb.append( "\nPhone Number:--- "+phoneNum +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDateTime+" \nCall duration in sec :--- "+dura );
-//			sb.append("\n----------------------------------");
-			contactlist.add(new HistoryInfo(phoneNum, sdf.format(callDateTime), convertTime(dura), outgoingCall, missedCall));
-			outgoingCall = false;
-			missedCall = false;
 		}
 		return contactlist;
-//		mCursor.close();
-//		Toast.makeText(getBaseContext(), sb, Toast.LENGTH_LONG).show();
 	}
 	
 	private String convertTime(String dura)
@@ -184,15 +278,41 @@ public class HistoryActivity extends Fragment
 		return time;
 	}
 	
-	public class ListviewContactAdapter extends BaseAdapter
+	/**
+	 * Khởi tạo các thành phần
+	 */
+	public void initWiget()
 	{
-		private ArrayList<HistoryInfo> listContact;
+		lvHis = (ListView)rootView.findViewById(R.id.lvHistory);
+		edSearchHistory = (EditText)rootView.findViewById(R.id.edSearchHistory);
+	}
+	
+	/**
+	 * Tạo sự kiện click
+	 */
+	public void initListener()
+	{
+		listenerlvHis = new AdapterView.OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, 
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				lvClickPos = arg2;
+				getActivity().openContextMenu(arg1);
+			}
+		};
+	}
+	public class ListviewHistoryAdapter extends BaseAdapter implements Filterable
+	{
+		private ArrayList<HistoryInfo> listOriginContact = null;
+		private ArrayList<HistoryInfo> listDisplayValue = null;
 		private LayoutInflater mInflater;
 
-		public ListviewContactAdapter(Context photosFragment, ArrayList<HistoryInfo> results)
+		public ListviewHistoryAdapter(Context photosFragment, ArrayList<HistoryInfo> results)
 		{
-		    listContact = results;
+		    listOriginContact = results;
+		    listDisplayValue = results;
 		    mInflater = LayoutInflater.from(photosFragment);
 		}
 
@@ -200,14 +320,14 @@ public class HistoryActivity extends Fragment
 		public int getCount() 
 		{
 		    // TODO Auto-generated method stub
-		    return listContact.size();
+		    return listDisplayValue.size();
 		}
 
 		@Override
 		public Object getItem(int arg0)
 		{
 		    // TODO Auto-generated method stub
-		    return listContact.get(arg0);
+		    return listDisplayValue.get(arg0);
 		}
 
 		@Override
@@ -224,65 +344,96 @@ public class HistoryActivity extends Fragment
 		    if(convertView == null){
 		        convertView = mInflater.inflate(R.layout.activity_history_customview, null);
 		        holder = new ViewHolder();
-		        holder.txtname = (TextView) convertView.findViewById(R.id.sipaddr);   
+		        holder.tvNum = (TextView) convertView.findViewById(R.id.sipaddr);   
 		        convertView.setTag(holder);
 		    } else {
 		        holder = (ViewHolder) convertView.getTag();
 		    }
 
-		    holder.txtname.setText(listContact.get(position).getSipAddr());       
+		    holder.tvNum.setText(listDisplayValue.get(position).getSipAddr());       
+		    
+		    holder.tvName = (TextView)convertView.findViewById(R.id.sipName);
+		    holder.tvName.setText("[" +listDisplayValue.get(position).getName() + "]");
 		    
 		    holder.calldate = (TextView)convertView.findViewById(R.id.calldate);
-		    holder.calldate.setText(listContact.get(position).getCallDate());
+		    holder.calldate.setText(listDisplayValue.get(position).getCallDate());
 		    
 		    holder.callduration = (TextView)convertView.findViewById(R.id.callduration);
-		    holder.callduration.setText(listContact.get(position).getCallDuration());
+		    holder.callduration.setText(listDisplayValue.get(position).getCallDuration());
 		    
 	        holder.imgCallStatus = (ImageView)convertView.findViewById(R.id.icon);
-	        if(listContact.get(position).isOutgoingCall())
+	        if(listDisplayValue.get(position).isOutgoingCall())
 			{
 				holder.imgCallStatus.setImageResource(R.drawable.out_call);
 			}
-			else if(listContact.get(position).isMissedCall())
+			else if(listDisplayValue.get(position).isMissedCall())
 				{
 					holder.imgCallStatus.setImageResource(R.drawable.miss_call);
 				}
 			else holder.imgCallStatus.setImageResource(R.drawable.in_call);
 		    
-//	        holder.sipname = (TextView) convertView.findViewById(R.id.sipName);
-//	        holder.sipname.setText(name);
-	        
 		    return convertView;
 		}
 
 		class ViewHolder
 		{
-		    TextView txtname, txtphone, calldate, callduration, sipname;
+		    TextView tvNum, calldate, callduration, tvName;
 		    ImageView imgCallStatus;
 		}
-	}	
-	
-	/**
-	 * Khởi tạo các thành phần
-	 */
-	public void initWiget()
-	{
-		lvHis = (ListView)	rootView.findViewById(R.id.lvHistory);
-	}
-	
-	/**
-	 * Tạo sự kiện click
-	 */
-	public void initListener()
-	{
-		listenerlvHis = new AdapterView.OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, 
-					int arg2, long arg3) {
-				// TODO Auto-generated method stub
-				lvClickPos = arg2;
-			}
-		};
-	}
+		@Override
+		public Filter getFilter() {
+			// TODO Auto-generated method stub
+			Filter filter = new Filter() {
+				
+				@SuppressWarnings("unchecked")
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results) {
+					// TODO Auto-generated method stub
+					listDisplayValue = (ArrayList<HistoryInfo>)results.values;
+					notifyDataSetChanged();
+				}
+				
+				@Override
+				protected FilterResults performFiltering(CharSequence constraint) {
+					// TODO Auto-generated method stub
+					FilterResults filterResult = new FilterResults();
+					ArrayList<HistoryInfo>filterList = new ArrayList<HistoryInfo>();
+					if(listOriginContact == null)
+					{
+						listOriginContact = new ArrayList<HistoryInfo>(listDisplayValue);
+					}
+					if(constraint == null || constraint.length() == 0)
+					{
+						filterResult.count = listOriginContact.size();
+						filterResult.values = listOriginContact;
+					}
+					else
+					{
+						constraint = constraint.toString().toLowerCase();
+						for(int i = 0; i < listOriginContact.size(); i++)
+						{
+							String data = listOriginContact.get(i).getName();
+							String num = listOriginContact.get(i).getSipAddr();
+							if(data.toLowerCase().contains(constraint.toString()) 
+									|| num.contains(constraint.toString()))
+							{
+								filterList.add(new HistoryInfo(
+										listOriginContact.get(i).getSipAddr(),
+										listOriginContact.get(i).getName(),
+										listOriginContact.get(i).getCallDate(),
+										listOriginContact.get(i).getCallDuration(),
+										listOriginContact.get(i).isOutgoingCall(),
+										listOriginContact.get(i).isMissedCall()));
+							}
+						}
+						filterResult.count = filterList.size();
+						filterResult.values = filterList;
+					}
+					return filterResult;
+				}
+			};
+			return filter;
+		}
+	}	
 }

@@ -2,40 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#00ffffff"
-    android:orientation="vertical" >
+    android:background="#C8C8C8"
+    android:orientation="vertical" 
+    >
     
     <LinearLayout 
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
+	    android:layout_height="wrap_content"
+	    >
 	    <EditText 
 	        android:id="@+id/edNumInput"
 	        android:layout_width="match_parent"
 	        android:layout_weight="1"
 	        android:textStyle="bold"
-	        android:textSize="40sp"
-	        android:gravity="center"
+	        android:textSize="28sp"
+	        android:hint="Nhập Số.."
 	        android:layout_height="match_parent"
-	        android:inputType="numberDecimal"
+	        android:inputType="text"
+	        android:cursorVisible="false"
+	        android:maxEms="18"
+	        android:singleLine="true"
 	        />
 
 	    <ImageButton
 	        android:id="@+id/btnBackSpace"
+	        style="?android:attr/borderlessButtonStyle"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center"
 	        android:layout_weight="3"
-	        android:background="@drawable/backspace"
 	        android:contentDescription="aa"
-	        android:padding="20dp"
-	        android:scaleType="fitCenter"
+	        android:scaleType="center"
 	        android:src="@drawable/backspace" />
 
 	</LinearLayout>
     
 	<LinearLayout 
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
+	    android:layout_height="wrap_content"
+	    style="?android:buttonBarStyle">
 
 	    <Button 
             android:layout_width="100dp"
@@ -45,7 +50,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 
 	    <Button 
             android:layout_width="100dp"
@@ -55,7 +60,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 
 	    <Button 
             android:layout_width="100dp"
@@ -65,12 +70,13 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	</LinearLayout>
 	
 	<LinearLayout 
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
+	    android:layout_height="wrap_content"
+	    style="?android:buttonBarStyle">
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -79,7 +85,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -88,7 +94,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -97,12 +103,13 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	</LinearLayout>
 	
 	<LinearLayout 
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
+	    android:layout_height="wrap_content"
+	    style="?android:buttonBarStyle">
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -111,7 +118,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -120,7 +127,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -129,12 +136,13 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	</LinearLayout>
 	
 	<LinearLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" >
+	    android:layout_height="wrap_content" 
+	    style="?android:buttonBarStyle">
 
 	    <Button 
             android:layout_width="100dp"
@@ -144,7 +152,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -153,7 +161,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	    <Button 
             android:layout_width="100dp"
             android:layout_height="60dp"
@@ -162,7 +170,7 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
 	</LinearLayout>
 
 	    <Button 
@@ -173,6 +181,6 @@
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_weight="1"
-            />
+            style="?android:attr/borderlessButtonStyle"/>
     
 </LinearLayout>

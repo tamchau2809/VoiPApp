@@ -1,13 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="chau.voipapp.ContactActivity" >
-
+    
     <item
         android:id="@+id/action_contact_search"
         android:showAsAction="ifRoom"
+        android:title="Tìm Kiếm"
         android:icon="@drawable/search"
-        android:title="Tìm Kiếm" 
-        android:titleCondensed="Tìm Kiếm"/>
+        />
+    
+    <item
+        android:id="@+id/action_contact_add_contact"
+        android:showAsAction="ifRoom"
+        android:title="Thêm Số"
+        android:icon="@drawable/addcontact"
+        />
     
     <item 
         android:id="@+id/action_contact_show_keyboard"

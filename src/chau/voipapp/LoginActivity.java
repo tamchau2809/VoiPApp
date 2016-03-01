@@ -1,12 +1,9 @@
 package chau.voipapp;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -19,10 +16,14 @@ public class LoginActivity extends Activity {
 	EditText editUsername, editPass, editDomain;
 	Button btnOkay, btnCancel;
 	
+
+	
+	
 	public String username,password,domain;
 	public SharedPreferences loginPreferences;
     public SharedPreferences.Editor loginPrefsEditor;   
-	
+    
+    String text;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,7 +34,7 @@ public class LoginActivity extends Activity {
 		
 		getFormWigets();		
 		
-		loginPreferences = getSharedPreferences("LOGIN", MODE_PRIVATE);
+		loginPreferences = getApplication().getSharedPreferences("LOGIN", MODE_PRIVATE);
         loginPrefsEditor = loginPreferences.edit();
         
         editUsername.setText(loginPreferences.getString("username", ""));
@@ -57,12 +58,10 @@ public class LoginActivity extends Activity {
                 loginPrefsEditor.putString("password", password);
                 loginPrefsEditor.putString("domain", domain);
                 loginPrefsEditor.commit();
+                
+                MainActivity.initManager(getApplicationContext());
+                
                 finish();
-//				else 
-//				{
-//	                loginPrefsEditor.clear();
-//	                loginPrefsEditor.commit();
-//		        }
 			}
 		});
 		

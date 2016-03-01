@@ -1,5 +1,7 @@
 package chau.voipapp;
 
+import java.text.ParseException;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -8,19 +10,22 @@ import android.support.v4.view.ViewPager;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
+import android.net.sip.SipRegistrationListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -33,12 +38,18 @@ public class MainActivity extends FragmentActivity
 	ActionBar actionBar;
 	
 	static int numberSection;
+
+	public static String text;
 	
-	public static SipManager sipManager;
-	public static SipProfile profile;
+	Context ctx;
 	
-	
-	
+	static Intent mServiceIntent;
+	public static final String ACTION_PING = "chau.voipapp.ACTION_PING";
+	public static final String ACTION_ONLINE = "chau.voipapp.ACTION_ONLINE";
+    public static final String ACTION_OFFLINE = "chau.voipapp.ACTION_OFFLINE";
+    public static final String EXTRA_MESSAGE= "chau.voipapp.EXTRA_MESSAGE";
+    public static final String ACTION_CONNECTING = "chau.voipapp.ACTION_CONNECTING";
+    public static final String FAILED= "chau.voipapp.FAILED";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,9 +62,7 @@ public class MainActivity extends FragmentActivity
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		initWiget();
 		check();
-//		initManager();
 		mSect = new SectionPagerAdapter(getSupportFragmentManager());
 		
 		actionBar = getActionBar();
@@ -82,9 +91,22 @@ public class MainActivity extends FragmentActivity
 					.setText(mSect.getPageTitle(i))
 					.setTabListener(this));
 		}
+		ctx = getApplicationContext();
+		initManager(ctx);
 		
+		mServiceIntent = new Intent(getApplicationContext(), SipService.class);
+		mServiceIntent.putExtra(EXTRA_MESSAGE, text);
+		mServiceIntent.setAction(ACTION_PING);
+		startService(mServiceIntent);
 	}
 
+	@Override
+	protected void onResume() 
+	{
+		super.onResume();
+//		initManager();
+	}
+	
 	@Override
 	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
@@ -94,7 +116,7 @@ public class MainActivity extends FragmentActivity
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
 		viewPager.setCurrentItem(tab.getPosition());
-		invalidateOptionsMenu();
+//		invalidateOptionsMenu();
 	}	
 
 	@Override
@@ -115,43 +137,37 @@ public class MainActivity extends FragmentActivity
 			// TODO Auto-generated method stub
 			switch (pos) 
 			{
+//            case 0:
+//                // The first section of the app is the most interesting -- it offers
+//                // a launchpad into the other demonstrations in this example application.
+//            	return new ContactActivity();
             case 0:
-                // The first section of the app is the most interesting -- it offers
-                // a launchpad into the other demonstrations in this example application.
-                numberSection = 0;
-            	return new LaunchpadSectionFragment();
-            case 1:
-            	numberSection = 1;
             	return new ContactActivity();
-            case 2:
-            	numberSection = 3;
+            case 1:
             	return new HistoryActivity();
 
             default:
                 // The other sections of the app are dummy placeholders.
-                Fragment fragment = new DummySectionFragment();
-                Bundle args = new Bundle();
-                args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, pos + 1);
-                fragment.setArguments(args);
-                return fragment;
+                
+                return new ContactActivity();
 			}
 		}
 
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return 3;
+			return 2;
 		}
 		
 		@Override
 		public CharSequence getPageTitle(int position) {
 			switch (position) 
 			{
+//			case 0:
+//				return getString(R.string.title_section1);
 			case 0:
-				return getString(R.string.title_section1);
-			case 1:
 				return getString(R.string.title_section2);
-			case 2:
+			case 1:
 				return getString(R.string.title_section3);
 				default:
 					return null;
@@ -159,15 +175,20 @@ public class MainActivity extends FragmentActivity
 		}
 	}
 	//---------------------------------------------------------
-	/**
-	 * 
-	 * @author com08
-	 *
-	 */
 	
+	@Override
+	protected void onStart() 
+	{
+		super.onStart();
+//		initManager();
+	}
 	
-	
-	//---------------------------------------------------------
+	@Override
+	protected void onResumeFragments() 
+	{
+		super.onResumeFragments();
+//		initManager(ctx);
+	}
 	
 	public static class LaunchpadSectionFragment extends Fragment {
 
@@ -202,7 +223,11 @@ public class MainActivity extends FragmentActivity
                             startActivity(externalActivityIntent);
                         }
                     });
-
+            
+//            mServiceIntent = new Intent(getActivity().getApplicationContext(), SipService.class);
+//    		mServiceIntent.setAction(ACTION_PING);
+//    		getActivity().startService(mServiceIntent);
+            
             return rootView;
         }
     }
@@ -296,117 +321,113 @@ public class MainActivity extends FragmentActivity
 			builder.show();
 		}
 	}
-	//--------- Kết nối tài khoản đã đăng nhập---------------------------------------------------
-	/**
-	 * Kết nối Acc
-	 */
-//	public void initManager()
-//	{
-//		if(sipManager == null)
-//		{
-//			sipManager = SipManager.newInstance(getApplicationContext());
-//		}
-//		initProfile();
-//	}
-//	
-//	public void initProfile()
-//	{
-//		if(sipManager == null)
-//		{
-//			return;
-//		}
-//		if(profile != null)
-//		{
-//			closeLocalProfile();
-//		}
-//		
-//		SharedPreferences prefs = getApplicationContext().getSharedPreferences("LOGIN", MODE_PRIVATE);
-//		final String username = prefs.getString("username", "");
-//		String password = prefs.getString("password", "");
-//		String domain = prefs.getString("domain", "");
-//		
-//		if(username.length() == 0 || password.length() == 0
-//				|| domain.length() == 0)
-//			return;
-//		
-//		try
-//		{
-//			SipProfile.Builder builder = new SipProfile.Builder(username, domain);
-//			builder.setPassword(password);
-//			profile = builder.build();
-//			
-//			sipManager.setRegistrationListener(profile.getUriString(), new SipRegistrationListener() {
-//				
-//				@Override
-//				public void onRegistrationFailed(String localProfileUri, int errorCode,
-//						String errorMessage) {
-//					// TODO Auto-generated method stub
-//					updateStatus("Thất Bại!", 2);
-//				}
-//				
-//				@Override
-//				public void onRegistrationDone(String localProfileUri, long expiryTime) {
-//					// TODO Auto-generated method stub
-//					tvAcc.setText(username.substring(5));
-//					updateStatus("Kết Nối", 1);
-//				}
-//				
-//				@Override
-//				public void onRegistering(String localProfileUri) {
-//					// TODO Auto-generated method stub
-//					updateStatus("Xin chờ..", 3);
-//				}
-//			});
-//		}
-//		catch (ParseException pe) {
-//            updateStatus("Error!!", 3);
-//            tvStatus.setTextColor(Color.WHITE);
-//        } 
-//		catch (SipException se) {
-//            updateStatus("Error!!", 3);
-//            tvStatus.setTextColor(Color.WHITE);
-//        }
-//	}
-//	
-//	public void updateStatus(final String status, final int num)
-//	{
-//		this.runOnUiThread(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				// TODO Auto-generated method stub
-//				tvStatus.setText(status);
-//				switch(num)
-//				{
-//				case 1:
-//					tvStatus.setTextColor(Color.GREEN);
-//				case 2:
-//					tvStatus.setTextColor(Color.RED);
-//				default:
-//					tvStatus.setTextColor(Color.WHITE);
-//				}
-//			}
-//		});
-//	}
-//	
-//	public void closeLocalProfile() {
-//        if (sipManager == null) {
-//            return;
-//        }
-//        try {
-//            if (profile != null) {
-//                sipManager.close(profile.getUriString());
-//                Log.d("CLOSE", "CLOSE_PROFILE");
-//            }
-//        } catch (Exception ee) {
-//            Log.d("/onDestroy", "Oops.. I did it again.", ee);
-//        }
-//    }
-	//------------------------------------------------------------
-	public void initWiget()
+	
+	public static void initManager(Context ctx)
 	{
-//		tvAcc = (TextView) viewPager.findViewById(R.id.tvAcc);
-//		tvStatus = (TextView)findViewById(R.id.tvStatus);
+		if(SipInit.sipManager == null)
+		{
+			SipInit.sipManager = SipManager.newInstance(ctx);
+		}
+		initProfile(ctx);
 	}
-	//------------------------------------------------------------
+	
+	public static void initProfile(final Context ctx)
+	{
+		if(SipInit.sipManager == null)
+		{
+			return;
+		}
+		if(SipInit.profile != null)
+		{
+			closeLocalProfile();
+		}
+		
+		SharedPreferences prefs = ctx.getSharedPreferences("LOGIN", MODE_PRIVATE);
+		final String username = prefs.getString("username", "");
+		String password = prefs.getString("password", "");
+		String domain = prefs.getString("domain", "");
+		
+		if(username.length() == 0 || password.length() == 0
+				|| domain.length() == 0)
+			return;
+		
+		try
+		{
+			SipProfile.Builder builder = new SipProfile.Builder(username, domain);
+			builder.setPassword(password);
+			SipInit.profile = builder.build();
+			
+			Intent intent = new Intent();
+			intent.setAction("chau.voipapp.INCOMING_CALL");
+			PendingIntent pi = PendingIntent.getBroadcast(ctx, 0, intent, Intent.FILL_IN_DATA);
+			SipInit.sipManager.open(SipInit.profile, pi, null);
+			SipInit.sipManager.setRegistrationListener(SipInit.profile.getUriString(), new SipRegistrationListener() {
+				
+				@Override
+				public void onRegistrationFailed(String localProfileUri, int errorCode,
+						String errorMessage) {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(ctx, SipService.class);
+					intent.setAction(ACTION_OFFLINE);
+					ctx.startService(intent);
+
+				}
+				
+				@Override
+				public void onRegistrationDone(String localProfileUri, long expiryTime) {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(ctx, SipService.class);
+					intent.setAction(ACTION_ONLINE);
+					ctx.startService(intent);
+
+				}
+				
+				@Override
+				public void onRegistering(String localProfileUri) {
+					// TODO Auto-generated method stub
+//					Intent intent = new Intent(getApplicationContext(), SipService.class);
+//					intent.setAction(ACTION_CONNECTING);
+//					startService(intent);
+
+				}
+			});
+		}
+		catch (ParseException pe) {
+			Intent intent = new Intent(ctx, SipService.class);
+			intent.setAction(FAILED);
+			ctx.startService(intent);
+
+		} 
+		catch (SipException se) {
+			Intent intent = new Intent(ctx, SipService.class);
+			intent.setAction(FAILED);
+			ctx.startService(intent);
+        }
+	}
+	
+	public void updateStatus(final String action)
+	{
+		this.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(getApplicationContext(), SipService.class);
+				intent.setAction(action);
+				startService(intent);
+			}
+		});
+	}
+	
+	public static void closeLocalProfile() {
+        if (SipInit.sipManager == null) {
+            return;
+        }
+        try {
+            if (SipInit.profile != null) {
+            	SipInit.sipManager.close(SipInit.profile.getUriString());
+            }
+        } catch (Exception ee) {
+        }
+    }
 }

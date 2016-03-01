@@ -48,6 +48,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name="SipService"
+            android:label="@string/SipService" android:enabled="true">
+        </service>
         <activity
             android:name=".CollectionDemoActivity"
             android:label="@string/title_activity_collection_demo"
@@ -64,11 +68,15 @@
         </activity>
         <activity
             android:name=".AboutActivity"
-            android:label="@string/title_activity_about" >
+            android:label="@string/title_activity_about" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ContactActivity"
-            android:label="@string/title_activity_contact" >
+            android:label="@string/title_activity_contact" android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".OnCallingActivity"
+            android:label="@string/title_activity_on_calling" android:screenOrientation="portrait">
         </activity>
     </application>
 

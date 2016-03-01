@@ -1,6 +1,7 @@
 package chau.voipapp;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 public class ContactItem implements Serializable, Comparable<ContactItem>
 {	
@@ -8,8 +9,8 @@ public class ContactItem implements Serializable, Comparable<ContactItem>
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String name;
-	private String number;
+	public String name;
+	public String number;
 	
 	public ContactItem(String name, String num) {
 		// TODO Auto-generated constructor stub
@@ -41,7 +42,6 @@ public class ContactItem implements Serializable, Comparable<ContactItem>
 	@Override
 	public int compareTo(ContactItem another) {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.getName().compareTo(another.getName());
 	}
-
 }

@@ -1,14 +1,20 @@
 package chau.voipapp;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 public class Keyboard extends Fragment  implements OnClickListener
 {
@@ -25,100 +31,58 @@ public class Keyboard extends Fragment  implements OnClickListener
 	private Button btnStar;
 	private Button btnHash;
 	
-	private StringBuilder sb;
+	Button btnCall;
 	
-//	private onKeyBoardEvent keyboardEventListener;
+	private ImageButton backSpace;
 	
-	private EditText edNumInput;
+	public static EditText edNumInput;
+	public static String numCall;
 	
 	int maxLength = 15;
 	int currentLength;
 	
-//	public static Keyboard newInstance(String value)
-//	{
-//		Keyboard kb = new Keyboard();
-//		Bundle bundle = new Bundle();
-//		bundle.putString("et_value", value);
-//		kb.setArguments(bundle);
-//		return kb;
-//	}
-	
-//	@SuppressWarnings("deprecation")
-//	@Override
-//	public void onAttach(Activity activity) 
-//	{
-//		try
-//		{
-//			keyboardEventListener = (onKeyBoardEvent)activity;
-//		}
-//		catch(ClassCastException e)
-//		{}
-//		super.onAttach(activity);
-//	}
+	View rootView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
 			ViewGroup container, Bundle savedInstanceState) 
 	{
-		View rootView = inflater.inflate(R.layout.keyboard, container, false);
-//		sb=new StringBuilder(getArguments().getString("et_value"));
-//        currentLength=sb.length();
-        edNumInput = (EditText)rootView.findViewById(R.id.edNumInput);
-		
-        btnOne = (Button)rootView.findViewById(R.id.btnOne);
-        btnOne.setOnClickListener(this);
-//        
-        btnTwo = (Button)rootView.findViewById(R.id.btnTwo);
-        btnTwo.setOnClickListener(this);
-//        btnTwo.setOnClickListener(new View.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				add("2");
-//			}
-//		});
-//        
-        btnThree = (Button)rootView.findViewById(R.id.btnThree);
-//        btnThree.setOnClickListener(new View.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				add("3");
-//			}
-//		});
-//        
-        btnFour = (Button)rootView.findViewById(R.id.btnFour);
-//        btnFour.setOnClickListener(new View.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				add("3");
-//			}
-//		});
-//        
-//        btnFive = (Button)rootView.findViewById(R.id.btnFive);
-//        btnFive.setOnClickListener(new View.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				add("5");
-//			}
-//		});
-        
+		rootView = inflater.inflate(R.layout.keyboard, container, false);
+        initWiget();
+		seteventClick(); 
+		InputMethodManager ipm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		ipm.hideSoftInputFromWindow(edNumInput.getWindowToken(), 0);
+		edNumInput.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+				ContactActivity.adapter.getFilter().filter(s.toString());
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		return rootView;
 	}
 	
-//	public interface onKeyBoardEvent
-//    {
-//        public void numberIsPressed(String total);
-//        public void backLongPressed();
-//        public void backButtonPressed(String total);
-//    }
-//	
+	@Override
+	public void onResume() 
+	{
+		edNumInput.setText(null);
+		super.onResume();
+	}
+	
 	public int getMaxLength() {
         return maxLength;
     }
@@ -132,5 +96,81 @@ public class Keyboard extends Fragment  implements OnClickListener
 		// TODO Auto-generated method stub
 		Button b1 = (Button)v;
 		edNumInput.setText(edNumInput.getText().toString() + b1.getText().toString());
+	}
+	
+	public void initWiget()
+	{
+		edNumInput = (EditText)rootView.findViewById(R.id.edNumInput);
+        btnOne = (Button)rootView.findViewById(R.id.btnOne);
+        btnTwo = (Button)rootView.findViewById(R.id.btnTwo);
+        btnThree = (Button)rootView.findViewById(R.id.btnThree);
+        btnFour = (Button)rootView.findViewById(R.id.btnFour);
+        btnFive = (Button)rootView.findViewById(R.id.btnFive);
+        btnSix = (Button)rootView.findViewById(R.id.btnSix);
+        btnSeven = (Button)rootView.findViewById(R.id.btnSeven);
+        btnEIGHT = (Button)rootView.findViewById(R.id.btnEight);
+        btnNine = (Button)rootView.findViewById(R.id.btnNine);
+        btnZero = (Button)rootView.findViewById(R.id.btnZero);
+        btnStar = (Button)rootView.findViewById(R.id.btnStar);
+        btnHash = (Button)rootView.findViewById(R.id.btnHash);
+        backSpace = (ImageButton)rootView.findViewById(R.id.btnBackSpace);
+        
+        btnCall = (Button)rootView.findViewById(R.id.btnCall);
+	}
+	
+	public void seteventClick()
+	{
+		btnOne.setOnClickListener(this);
+        btnTwo.setOnClickListener(this);
+        btnThree.setOnClickListener(this);
+        btnFour.setOnClickListener(this);
+        btnFive.setOnClickListener(this);
+        btnSix.setOnClickListener(this);
+        btnSeven.setOnClickListener(this);
+        btnEIGHT.setOnClickListener(this);
+        btnNine.setOnClickListener(this);
+        btnZero.setOnClickListener(this);
+        btnStar.setOnClickListener(this);
+        btnHash.setOnClickListener(this);
+        
+        backSpace.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String str=edNumInput.getText().toString();
+		        if (str.length() >1 ) { 
+		            str = str.substring(0, str.length() - 1);
+		            edNumInput.setText(str);
+		            }
+		       else if (str.length() <=1 ) {
+		    	   edNumInput.setText(null);
+		    	   edNumInput.setHint("Nhập Số..");
+		        }
+			}
+		});
+        
+        btnCall.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				numCall = edNumInput.getText().toString();
+				if(numCall == null || numCall.length() == 0)
+				{
+					AlertDialog.Builder noLogin = new AlertDialog.Builder(getContext());
+					noLogin.setTitle("Oops!!!");
+					noLogin.setMessage("Hãy Nhập Số Điện Thoại!!!");
+					noLogin.setPositiveButton("OK", null);
+					noLogin.setCancelable(false);
+					noLogin.show();
+				}
+				else
+				{
+					Intent intent = new Intent(getActivity().getApplicationContext(), OnCallingActivity.class);
+					startActivity(intent);
+				}
+			}
+		});
 	}
 }

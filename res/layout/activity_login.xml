@@ -71,6 +71,7 @@
         
         <Button
         android:id="@+id/btnCancel"
+        style="?android:attr/buttonStyleToggle"
         android:layout_weight="1"
         android:layout_marginLeft="10dp"
         android:textSize="25sp"
@@ -80,6 +81,7 @@
         
         <Button
         android:id="@+id/btnOkay"
+        style="?android:attr/buttonStyleToggle"
         android:layout_width="160dp"
         android:layout_marginRight="10dp"
         android:textSize="25sp"
